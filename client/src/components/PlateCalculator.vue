@@ -60,7 +60,7 @@ onMounted(() => {
 });
 
 function redrawCanvas() {
-  const inputWeight = Math.floor(Number(totalWeight) / 2);
+  const inputWeight = Math.floor(Number(totalWeight - 45) / 2);
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
