@@ -4,7 +4,7 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["master"]
+    branches: ["main"]
     paths:
       - "client/**"
       - ".github/workflows/client.yml"
@@ -50,8 +50,8 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload client dist folder
-          path: './client/dist'
-          
+          path: "./client/dist"
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
