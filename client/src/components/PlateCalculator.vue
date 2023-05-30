@@ -140,12 +140,8 @@ function redrawCanvas() {
   }
 }
 
-function adjust(sign: string) {
-  if (sign == "+") {
-    totalWeight.value = Number(totalWeight.value) + 5;
-  } else {
-    totalWeight.value = Number(totalWeight.value) - 5;
-  }
+function adjust(amount: number) {
+  totalWeight.value = Number(totalWeight.value) + amount;
   redrawCanvas();
 }
 </script>
@@ -158,9 +154,13 @@ function adjust(sign: string) {
       <input type="text" v-model="totalWeight" @input="redrawCanvas" />
       <span class="unit">lbs</span>
       <div class="button-container">
-        <button class="up-button" v-on:click="adjust('+')">▲</button>
-        <button class="down-button" v-on:click="adjust('-')">▼</button>
+        <button class="up-button" v-on:click="adjust(1)">▲</button>
+        <button class="down-button" v-on:click="adjust(-1)">▼</button>
       </div>
+    </div>
+    <div class="big-buttons">
+      <button class="big-up-button" v-on:click="adjust(5)">+5</button>
+      <button class="big-down-button" v-on:click="adjust(-5)">-5</button>
     </div>
     <canvas id="canvas"></canvas>
   </div>
@@ -229,5 +229,17 @@ input[type=text] {
   border: 1px solid #000;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.big-up-button,
+.big-down-button {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  font-size: 20px;
+  border: 1px solid #000;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 10px;
 }
 </style>
