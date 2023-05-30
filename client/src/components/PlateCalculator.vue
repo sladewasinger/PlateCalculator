@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 // define input weight
-let totalWeight = 230;
+let totalWeight = ref(230);
 
 type Plate = {
   weight: number;
@@ -54,15 +54,22 @@ function roundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, width:
 onMounted(() => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
-  // define canvas size
-  canvas.width = window.innerWidth;
-  canvas.height = 600;
+  function resize() {
+    canvas.width = Math.min(800, window.innerWidth - 25);
+    canvas.height = 600;
+  }
 
+  window.addEventListener('resize', () => {
+    resize();
+    redrawCanvas();
+  });
+
+  resize();
   redrawCanvas();
 });
 
 function redrawCanvas() {
-  const inputWeight = (Number(totalWeight) - 45) / 2;
+  const inputWeight = (Number(totalWeight.value) - 45) / 2;
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
@@ -127,12 +134,29 @@ function redrawCanvas() {
     }
   }
 }
+
+function adjust(sign: string) {
+  if (sign == "+") {
+    totalWeight.value = Number(totalWeight.value) + 1;
+  } else {
+    totalWeight.value = Number(totalWeight.value) - 1;
+  }
+  redrawCanvas();
+}
 </script>
 
 <template>
   <div class="container">
     <h1>Plate Calculator</h1>
-    <input type="text" v-model="totalWeight" @input="redrawCanvas" />
+    <h3>Assuming 45lb barbell</h3>
+    <div class="input-container">
+      <input type="text" v-model="totalWeight" @input="redrawCanvas" />
+      <span class="unit">lbs</span>
+      <div class="button-container">
+        <button class="up-button" v-on:click="adjust('+')">▲</button>
+        <button class="down-button" v-on:click="adjust('-')">▼</button>
+      </div>
+    </div>
     <canvas id="canvas"></canvas>
   </div>
 </template>
@@ -150,5 +174,53 @@ function redrawCanvas() {
 canvas {
   border: 1px solid black;
   box-sizing: border-box;
+}
+
+input[type=text] {
+  width: 50%;
+  padding: 12px 20px;
+  margin: 0;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  min-width: 400px;
+  font-size: 25px;
+  display: inline-block;
+}
+
+.unit {
+  font-size: 25px;
+  margin-left: -10px;
+}
+
+.input-container {
+  position: relative;
+  padding-right: 50px;
+  margin: 15px;
+}
+
+.unit {
+  position: absolute;
+  top: 50%;
+  right: 70px;
+  transform: translateY(-50%);
+}
+
+.button-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50px;
+}
+
+.up-button,
+.down-button {
+  display: block;
+  width: 100%;
+  height: 50%;
+  font-size: 20px;
+  border: 1px solid #000;
 }
 </style>
