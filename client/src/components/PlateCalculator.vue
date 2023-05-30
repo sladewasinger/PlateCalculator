@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
+document.addEventListener('dblclick', function (event) {
+  event.preventDefault();
+}, { passive: false });
+
 // define input weight
 let totalWeight = ref(230);
 
