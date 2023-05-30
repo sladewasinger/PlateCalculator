@@ -82,26 +82,26 @@ function redrawCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   const calculatedPlates = calculatePlates(inputWeight);
-  let x = 0;
+  let totalPlateWidth = 0;
   let strokeWidth = 4;
   let padding = strokeWidth + 20;
 
-  // Calculate barbell width first
+  // Calculate total width of all plates first
   for (let plate of calculatedPlates) {
     const plateWidth = Math.max(20, plate.diameter * 0.5);
-    x += plateWidth + padding;
+    totalPlateWidth += plateWidth + padding;
   }
+
+  // Calculate the starting x-coordinate based on the total width of all plates
+  let x = (canvas.width - totalPlateWidth) / 2;
 
   // Draw the barbell bar
   const barHeight = 10;
-  const barWidth = canvas.width / 2 + x;
+  const barWidth = x + totalPlateWidth;
   const barY = canvas.height / 2 - barHeight / 2;
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "#AAA";
   ctx.fillRect(0, barY, barWidth, barHeight);
-  ctx.fillRect(canvas.width / 2 - 25, barY - 5, x + 25, 20);
-
-  // Reset x
-  x = 0;
+  ctx.fillRect(x - 25, barY - 5, totalPlateWidth + 25, 20);
 
   // Now draw the plates
   for (let plate of calculatedPlates) {
@@ -109,20 +109,20 @@ function redrawCanvas() {
     const plateHeight = Math.max(50, plate.diameter * 3);
     const plateRadius = 5;
 
-    const plateX = canvas.width / 2 + x;
+    const plateX = x;
     const plateY = canvas.height / 2;
 
     x += plateWidth + padding;
 
     ctx.fillStyle = plate.color;
-    ctx.strokeStyle = 'black';
+    ctx.strokeStyle = '#AAA';
     ctx.lineWidth = strokeWidth;
     roundedRect(ctx, plateX, plateY - plateHeight / 2, plateWidth, plateHeight, plateRadius);
     ctx.stroke();
     ctx.fill();
 
     // Draw the plate weight
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = '#AAA';
     ctx.font = 'bold 30px trebuchet ms';
     ctx.textAlign = 'center';  // Horizontally align the text
     ctx.textBaseline = 'middle'; // Vertically align the text
@@ -142,9 +142,9 @@ function redrawCanvas() {
 
 function adjust(sign: string) {
   if (sign == "+") {
-    totalWeight.value = Number(totalWeight.value) + 1;
+    totalWeight.value = Number(totalWeight.value) + 5;
   } else {
-    totalWeight.value = Number(totalWeight.value) - 1;
+    totalWeight.value = Number(totalWeight.value) - 5;
   }
   redrawCanvas();
 }
@@ -177,7 +177,7 @@ function adjust(sign: string) {
 }
 
 canvas {
-  border: 1px solid black;
+  border: 1px solid #AAA;
   box-sizing: border-box;
 }
 
@@ -227,5 +227,7 @@ input[type=text] {
   height: 50%;
   font-size: 20px;
   border: 1px solid #000;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>
