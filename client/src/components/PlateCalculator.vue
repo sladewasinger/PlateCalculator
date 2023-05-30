@@ -55,7 +55,12 @@ onMounted(() => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
   function resize() {
-    canvas.width = Math.min(800, window.innerWidth - 25);
+    const input = (document.getElementsByClassName('input-container') as HTMLCollectionOf<Element>)[0];
+
+    const width = Math.min(800, window.innerWidth - 25);
+
+    input.setAttribute('style', `width: ${width}px;`);
+    canvas.width = width;
     canvas.height = 600;
   }
 
@@ -177,7 +182,7 @@ canvas {
 }
 
 input[type=text] {
-  width: 50%;
+  width: 100%;
   padding: 12px 20px;
   margin: 0;
   box-sizing: border-box;
