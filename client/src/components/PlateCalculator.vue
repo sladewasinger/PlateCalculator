@@ -6,7 +6,8 @@ document.addEventListener('dblclick', function (event) {
 }, { passive: false });
 
 // define input weight
-let totalWeight = ref(230);
+let totalWeight = ref(220);
+let barbellWeight = ref(45);
 
 type Plate = {
   weight: number;
@@ -59,12 +60,8 @@ onMounted(() => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
   function resize() {
-    const input = (document.getElementsByClassName('input-container') as HTMLCollectionOf<Element>)[0];
-    const bigButtons = (document.getElementsByClassName('big-buttons') as HTMLCollectionOf<Element>)[0];
     const width = Math.min(800, window.innerWidth - 25);
 
-    input.setAttribute('style', `width: ${width}px;`);
-    bigButtons.setAttribute('style', `width: ${width}px;`);
     canvas.width = width;
     canvas.height = 600;
   }
@@ -79,7 +76,7 @@ onMounted(() => {
 });
 
 function redrawCanvas() {
-  const inputWeight = (Number(totalWeight.value) - 45) / 2;
+  const inputWeight = (Number(totalWeight.value) - barbellWeight.value) / 2;
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
@@ -154,7 +151,7 @@ function adjust(amount: number) {
 <template>
   <div class="container">
     <h1>Plate Calculator</h1>
-    <h3>Assuming 45lb barbell</h3>
+    <h3>Assuming {{ barbellWeight }}lb barbell</h3>
     <div class="input-container">
       <input type="text" v-model="totalWeight" @input="redrawCanvas" />
       <span class="unit">lbs</span>
@@ -164,11 +161,8 @@ function adjust(amount: number) {
       </div>
     </div>
     <div class="big-buttons">
-      <button class="big-up-button" v-on:click="adjust(5)">+5</button>
-      <button class="big-down-button" v-on:click="adjust(-5)">-5</button>
-      <!-- <span class="spacer"></span>
-      <button class="big-up-button" v-on:click="adjust(2.5)">+2.5</button>
-      <button class="big-down-button" v-on:click="adjust(-2.5)">-2.5</button> -->
+      <button class="big-button" v-on:click="adjust(5)">+5</button>
+      <button class="big-button" v-on:click="adjust(-5)">-5</button>
     </div>
     <canvas id="canvas"></canvas>
   </div>
@@ -180,8 +174,8 @@ function adjust(amount: number) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  width: 100vw;
+  min-width: 100%;
+  max-width: 800px;
 }
 
 canvas {
@@ -194,7 +188,7 @@ input[type=text] {
   padding: 12px 20px;
   margin: 0;
   box-sizing: border-box;
-  border: 1px solid #ccc;
+  border: 1px solid #000;
   border-radius: 4px;
   resize: vertical;
   min-width: 400px;
@@ -202,25 +196,23 @@ input[type=text] {
   display: inline-block;
 }
 
-.unit {
-  font-size: 25px;
-  margin-left: -10px;
-}
-
 .input-container {
   position: relative;
   padding-right: 50px;
   margin: 15px 0 0 0;
+  width: min(calc(100% - 25px), 800px);
 }
 
 .unit {
+  font-size: 25px;
+  color: #000;
   position: absolute;
   top: 50%;
   right: 70px;
   transform: translateY(-50%);
 }
 
-.button-container {
+.input-container .button-container {
   position: absolute;
   top: 0;
   right: 0;
@@ -237,26 +229,37 @@ input[type=text] {
   border: 1px solid #000;
   border-radius: 4px;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .big-buttons {
+  width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 30px;
   margin: 15px;
+  touch-action: manipulation;
+  user-select: none;
 }
 
-.big-up-button,
-.big-down-button {
+.big-button {
   display: inline-block;
-  min-width: 150px;
-  height: 100px;
+  min-width: 125px;
+  height: 125px;
   font-size: 50px;
-  border: 1px solid #000;
-  border-radius: 4px;
+  border: 5px outset #DDD;
+  border-radius: 50%;
   cursor: pointer;
   touch-action: manipulation
+}
+
+.big-button:hover {
+  border: 5px outset rgb(92, 124, 194);
+}
+
+.big-button:active {
+  border: 5px inset #DDD;
 }
 </style>
