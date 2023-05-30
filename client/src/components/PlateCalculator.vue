@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 
 // define input weight
-let totalWeight = 225;
+let totalWeight = 230;
 
 type Plate = {
   weight: number;
@@ -17,7 +17,7 @@ const plates: Plate[] = [
   { weight: 10, color: 'white', diameter: 30 },
   { weight: 5, color: 'red', diameter: 20 },
   { weight: 2.5, color: 'blue', diameter: 10 },
-  { weight: 1.25, color: 'yellow', diameter: 10 },
+  { weight: 1, color: 'yellow', diameter: 10 },
   { weight: 0.5, color: 'green', diameter: 10 },
   { weight: 0.25, color: 'white', diameter: 10 },
 ];
@@ -28,7 +28,9 @@ function calculatePlates(weight: number): Plate[] {
   let result: Plate[] = [];
   for (let plate of plates) {
     while (weight >= plate.weight) {
+      console.log("Before", weight);
       weight -= plate.weight;
+      console.log("After", weight, plate.weight);
       result.push(plate);
     }
   }
@@ -60,7 +62,7 @@ onMounted(() => {
 });
 
 function redrawCanvas() {
-  const inputWeight = Math.round((Number(totalWeight) - 45) / 2);
+  const inputWeight = (Number(totalWeight) - 45) / 2;
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
