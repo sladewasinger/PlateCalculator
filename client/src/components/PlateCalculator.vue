@@ -90,6 +90,7 @@ function redrawCanvas() {
     const plateWidth = Math.max(20, plate.diameter * 0.5);
     totalPlateWidth += plateWidth + padding;
   }
+  totalPlateWidth -= padding; // remove the last padding
 
   // Calculate the starting x-coordinate based on the total width of all plates
   let x = (canvas.width - totalPlateWidth) / 2;
@@ -97,7 +98,8 @@ function redrawCanvas() {
   // Draw the barbell
   const barHeight = 10;
   const endBarHeight = barHeight * 3;
-  const barWidth = x + totalPlateWidth;
+  const barWidth = x + totalPlateWidth + padding - 10;
+  const endBarWidth = Math.max(totalPlateWidth + padding * 2, 75);
   const barY = canvas.height / 2 - barHeight / 2;
   const endBarY = canvas.height / 2 - endBarHeight / 2;
   ctx.fillStyle = "#DDD";
@@ -109,10 +111,10 @@ function redrawCanvas() {
 
   // end bar
   ctx.fillStyle = "#DDD";
-  ctx.fillRect(x - 25, endBarY, Math.max(totalPlateWidth + 25, 75), endBarHeight);
+  ctx.fillRect(x - 25, endBarY, endBarWidth, endBarHeight);
   ctx.fillStyle = "rgba(0,0,0,0.5)";
   ctx.filter = "blur(2px)";
-  ctx.fillRect(x - 25, endBarY + endBarHeight / 2, Math.max(totalPlateWidth + 25, 75), endBarHeight / 2); // shadow
+  ctx.fillRect(x - 25, endBarY + endBarHeight / 2, endBarWidth, endBarHeight / 2); // shadow
   ctx.filter = "none";
 
   // Draw the plates
