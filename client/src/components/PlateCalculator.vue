@@ -257,5 +257,6 @@ input[type=text] {
   border: 1px solid #000;
   border-radius: 4px;
   cursor: pointer;
+  touch-action: manipulation
 }
 </style>
