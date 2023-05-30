@@ -12,12 +12,12 @@ type Plate = {
 
 const plates: Plate[] = [
   { weight: 45, color: 'blue', diameter: 60 },
-  { weight: 35, color: 'yellow', diameter: 50 },
+  { weight: 35, color: '#FFC300', diameter: 50 }, // dark yellow 
   { weight: 25, color: 'green', diameter: 40 },
-  { weight: 10, color: 'white', diameter: 30 },
+  { weight: 10, color: '#555', diameter: 30 },
   { weight: 5, color: 'red', diameter: 20 },
   { weight: 2.5, color: 'blue', diameter: 10 },
-  { weight: 1, color: 'yellow', diameter: 10 },
+  { weight: 1, color: '#FFC300', diameter: 10 },
   { weight: 0.5, color: 'green', diameter: 10 },
   { weight: 0.25, color: 'white', diameter: 10 },
 ];
@@ -56,10 +56,11 @@ onMounted(() => {
 
   function resize() {
     const input = (document.getElementsByClassName('input-container') as HTMLCollectionOf<Element>)[0];
-
+    const bigButtons = (document.getElementsByClassName('big-buttons') as HTMLCollectionOf<Element>)[0];
     const width = Math.min(800, window.innerWidth - 25);
 
     input.setAttribute('style', `width: ${width}px;`);
+    bigButtons.setAttribute('style', `width: ${width}px;`);
     canvas.width = width;
     canvas.height = 600;
   }
@@ -99,9 +100,9 @@ function redrawCanvas() {
   const barHeight = 10;
   const barWidth = x + totalPlateWidth;
   const barY = canvas.height / 2 - barHeight / 2;
-  ctx.fillStyle = "#AAA";
+  ctx.fillStyle = "#DDD";
   ctx.fillRect(0, barY, barWidth, barHeight);
-  ctx.fillRect(x - 25, barY - 5, totalPlateWidth + 25, 20);
+  ctx.fillRect(x - 25, barY - 5, Math.max(totalPlateWidth + 25, 75), 20);
 
   // Now draw the plates
   for (let plate of calculatedPlates) {
@@ -115,14 +116,14 @@ function redrawCanvas() {
     x += plateWidth + padding;
 
     ctx.fillStyle = plate.color;
-    ctx.strokeStyle = '#AAA';
+    ctx.strokeStyle = '#DDD';
     ctx.lineWidth = strokeWidth;
     roundedRect(ctx, plateX, plateY - plateHeight / 2, plateWidth, plateHeight, plateRadius);
     ctx.stroke();
     ctx.fill();
 
     // Draw the plate weight
-    ctx.fillStyle = '#AAA';
+    ctx.fillStyle = '#DDD';
     ctx.font = 'bold 30px trebuchet ms';
     ctx.textAlign = 'center';  // Horizontally align the text
     ctx.textBaseline = 'middle'; // Vertically align the text
@@ -161,6 +162,9 @@ function adjust(amount: number) {
     <div class="big-buttons">
       <button class="big-up-button" v-on:click="adjust(5)">+5</button>
       <button class="big-down-button" v-on:click="adjust(-5)">-5</button>
+      <!-- <span class="spacer"></span>
+      <button class="big-up-button" v-on:click="adjust(2.5)">+2.5</button>
+      <button class="big-down-button" v-on:click="adjust(-2.5)">-2.5</button> -->
     </div>
     <canvas id="canvas"></canvas>
   </div>
@@ -177,7 +181,7 @@ function adjust(amount: number) {
 }
 
 canvas {
-  border: 1px solid #AAA;
+  border: 1px solid #DDD;
   box-sizing: border-box;
 }
 
@@ -202,7 +206,7 @@ input[type=text] {
 .input-container {
   position: relative;
   padding-right: 50px;
-  margin: 15px;
+  margin: 15px 0 0 0;
 }
 
 .unit {
@@ -231,15 +235,23 @@ input[type=text] {
   cursor: pointer;
 }
 
+.big-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin: 15px;
+}
+
 .big-up-button,
 .big-down-button {
   display: inline-block;
-  width: 100px;
+  min-width: 150px;
   height: 100px;
-  font-size: 20px;
+  font-size: 50px;
   border: 1px solid #000;
   border-radius: 4px;
   cursor: pointer;
-  margin: 10px;
 }
 </style>
