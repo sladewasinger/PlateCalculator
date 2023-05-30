@@ -197,6 +197,7 @@ function adjustWeight(amount: number) {
   justify-content: center;
   min-width: 100%;
   max-width: 800px;
+  padding-top: 25px;
 }
 
 canvas {
