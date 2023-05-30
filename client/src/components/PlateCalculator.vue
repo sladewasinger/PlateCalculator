@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import tinycolor from 'tinycolor2';
 
 document.addEventListener('dblclick', function (event) {
   event.preventDefault();
 }, { passive: false });
 
-// define input weight
 let totalWeight = ref(220);
 let barbellWeight = ref(45);
 
@@ -17,7 +17,7 @@ type Plate = {
 
 const plates: Plate[] = [
   { weight: 45, color: 'blue', diameter: 60 },
-  { weight: 35, color: '#FFC300', diameter: 50 }, // dark yellow 
+  { weight: 35, color: '#FFC300', diameter: 50 },
   { weight: 25, color: 'green', diameter: 40 },
   { weight: 10, color: '#555', diameter: 30 },
   { weight: 5, color: 'red', diameter: 20 },
@@ -33,9 +33,7 @@ function calculatePlates(weight: number): Plate[] {
   let result: Plate[] = [];
   for (let plate of plates) {
     while (weight >= plate.weight) {
-      console.log("Before", weight);
       weight -= plate.weight;
-      console.log("After", weight, plate.weight);
       result.push(plate);
     }
   }
@@ -80,7 +78,6 @@ function redrawCanvas() {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-  // Clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   const calculatedPlates = calculatePlates(inputWeight);
@@ -97,15 +94,28 @@ function redrawCanvas() {
   // Calculate the starting x-coordinate based on the total width of all plates
   let x = (canvas.width - totalPlateWidth) / 2;
 
-  // Draw the barbell bar
+  // Draw the barbell
   const barHeight = 10;
+  const endBarHeight = barHeight * 3;
   const barWidth = x + totalPlateWidth;
   const barY = canvas.height / 2 - barHeight / 2;
+  const endBarY = canvas.height / 2 - endBarHeight / 2;
   ctx.fillStyle = "#DDD";
   ctx.fillRect(0, barY, barWidth, barHeight);
-  ctx.fillRect(x - 25, barY - 5, Math.max(totalPlateWidth + 25, 75), 20);
+  ctx.fillStyle = "rgba(0,0,0,0.5)";
+  ctx.filter = "blur(2px)";
+  ctx.fillRect(0, barY + barHeight / 2, barWidth, barHeight);
+  ctx.filter = "none";
 
-  // Now draw the plates
+  // end bar
+  ctx.fillStyle = "#DDD";
+  ctx.fillRect(x - 25, endBarY, Math.max(totalPlateWidth + 25, 75), endBarHeight);
+  ctx.fillStyle = "rgba(0,0,0,0.5)";
+  ctx.filter = "blur(2px)";
+  ctx.fillRect(x - 25, endBarY + endBarHeight / 2, Math.max(totalPlateWidth + 25, 75), endBarHeight / 2); // shadow
+  ctx.filter = "none";
+
+  // Draw the plates
   for (let plate of calculatedPlates) {
     const plateWidth = Math.max(20, plate.diameter * 0.5);
     const plateHeight = Math.max(50, plate.diameter * 3);
@@ -121,28 +131,39 @@ function redrawCanvas() {
     ctx.lineWidth = strokeWidth;
     roundedRect(ctx, plateX, plateY - plateHeight / 2, plateWidth, plateHeight, plateRadius);
     ctx.stroke();
+
+    const darkColor = tinycolor(plate.color).darken(40).toString();
+    const grad = ctx.createLinearGradient(
+      plateX, plateY - plateHeight / 2,
+      plateX, plateY + plateHeight / 2
+    );
+    grad.addColorStop(0, plate.color);
+    grad.addColorStop(0.3, plate.color);
+    grad.addColorStop(1, darkColor);
+    ctx.fillStyle = grad;
+    roundedRect(ctx, plateX, plateY - plateHeight / 2, plateWidth, plateHeight, plateRadius);
     ctx.fill();
 
-    // Draw the plate weight
+    // Draw the plate weight as text
     ctx.fillStyle = '#DDD';
     ctx.font = 'bold 30px trebuchet ms';
-    ctx.textAlign = 'center';  // Horizontally align the text
-    ctx.textBaseline = 'middle'; // Vertically align the text
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
     const weightStr = plate.weight.toString();
     const textX = plateX + plateWidth / 2;
-    let textY = plateY - 150; // Adjust this as needed
+    let textY = plateY - 150;
     for (let i = 0; i < weightStr.length; i++) {
       ctx.fillText(weightStr[i], textX, textY);
       let ySpacing = 30;
       if (weightStr[i + 1] == ".") {
         ySpacing = 15;
       }
-      textY += ySpacing; // Adjust this as needed
+      textY += ySpacing;
     }
   }
 }
 
-function adjust(amount: number) {
+function adjustWeight(amount: number) {
   totalWeight.value = Number(totalWeight.value) + amount;
   redrawCanvas();
 }
@@ -156,13 +177,13 @@ function adjust(amount: number) {
       <input type="text" v-model="totalWeight" @input="redrawCanvas" />
       <span class="unit">lbs</span>
       <div class="button-container">
-        <button class="up-button" v-on:click="adjust(1)">▲</button>
-        <button class="down-button" v-on:click="adjust(-1)">▼</button>
+        <button class="up-button" v-on:click="adjustWeight(1)">▲</button>
+        <button class="down-button" v-on:click="adjustWeight(-1)">▼</button>
       </div>
     </div>
     <div class="big-buttons">
-      <button class="big-button" v-on:click="adjust(5)">+5</button>
-      <button class="big-button" v-on:click="adjust(-5)">-5</button>
+      <button class="big-button" v-on:click="adjustWeight(5)">+5</button>
+      <button class="big-button" v-on:click="adjustWeight(-5)">-5</button>
     </div>
     <canvas id="canvas"></canvas>
   </div>
