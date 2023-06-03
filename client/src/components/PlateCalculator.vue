@@ -80,6 +80,8 @@ function redrawCanvas() {
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#090909';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   const calculatedPlates = calculatePlates(inputWeight);
 
