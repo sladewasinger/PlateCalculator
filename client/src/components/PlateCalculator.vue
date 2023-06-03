@@ -8,6 +8,7 @@ document.addEventListener('dblclick', function (event) {
 
 let totalWeight = ref(220);
 let barbellWeight = ref(45);
+let plateOutput = ref<Plate[]>([]);
 
 type Plate = {
   weight: number;
@@ -81,6 +82,9 @@ function redrawCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   const calculatedPlates = calculatePlates(inputWeight);
+
+  plateOutput.value = calculatedPlates;
+
   let totalPlateWidth = 0;
   let strokeWidth = 4;
   let padding = strokeWidth + 20;
@@ -172,7 +176,7 @@ function adjustWeight(amount: number) {
 </script>
 
 <template>
-  <div class="container">
+  <div class="container plate-calculator">
     <h1>Plate Calculator</h1>
     <h3>Assuming {{ barbellWeight }}lb barbell</h3>
     <div class="input-container">
@@ -188,6 +192,14 @@ function adjustWeight(amount: number) {
       <button class="big-button" v-on:click="adjustWeight(-5)">-5</button>
     </div>
     <canvas id="canvas"></canvas>
+    <div class="text-output">
+      <h3>Plates on each side:</h3>
+      <ul>
+        <li v-for="plate in plateOutput" :key="plate.weight">
+          {{ plate.weight }}lb
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
